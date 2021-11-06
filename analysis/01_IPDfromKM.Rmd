@@ -1,0 +1,159 @@
+---
+title: "01_IPDfromKM"
+author: "Arthur M. Albuquerque"
+date: "11/6/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(here)
+library(IPDfromKM)
+library(dplyr)
+```
+
+# 8 years
+
+Process data coordinates + Reconstruct IPD
+
+```{r preprocessing}
+no_pace <- read.csv(here::here("data/no_pacemaker_eight_years_km.csv"),
+                    header= TRUE)
+pace <- read.csv(here::here("data/pacemaker_eight_years_km.csv"),
+                 header= TRUE)
+
+# looking at 8 years
+
+np <- c(480,340,166, 59, 10) # number at risk for no_pace
+p <- c(480,330,167, 60, 12) # number at risk for pace
+t_risk <- c(0,2,4, 6, 8) # X axis tick labels
+
+pre_no_pace <- IPDfromKM::preprocess(dat=no_pace,
+                                     trisk=t_risk,
+                                     nrisk=np,
+                                     maxy=100)
+
+pre_pace <- IPDfromKM::preprocess(dat=pace,
+                                  trisk=t_risk,
+                                  nrisk=p,
+                                  maxy=100)
+
+ipd_no_pace <- IPDfromKM::getIPD(prep=pre_no_pace,
+                                 armID=0, # treat = 0
+                                 tot.events=NULL)
+
+ipd_pace <- IPDfromKM::getIPD(prep=pre_pace,
+                              armID=1, # treat = 1
+                              tot.events=NULL)
+```
+
+Accuracy assessment
+
+```{r accuracy}
+summary(ipd_no_pace)
+plot(ipd_no_pace)
+
+summary(ipd_pace)
+plot(ipd_pace)
+```
+
+Secondary analysis
+
+```{r secondary}
+report <- IPDfromKM::survreport(ipd1=ipd_no_pace$IPD,
+                                ipd2=ipd_pace$IPD,
+                                arms=2,
+                                interval=5, 
+                                s=c(0.50,0.75,0.95))
+
+```
+
+Generate unique data frame with both IPD data
+
+```{r}
+both_ipd8 = dplyr::bind_rows(ipd_pace$IPD, ipd_no_pace$IPD) %>% 
+  dplyr::mutate(treat = dplyr::case_when(
+    treat == 0 ~ "No pacemaker",
+    treat == 1 ~ "Pacemaker"),
+    treat = as.factor(treat))
+```
+
+```{r}
+save(both_ipd8,
+     file = here::here("output/data/both_ipd8.RData"))
+```
+
+
+# 4 years
+
+Process data coordinates + Reconstruct IPD
+
+```{r preprocessing}
+no_pace <- read.csv(here::here("data/no_pacemaker_four_years_km.csv"),
+                    header= TRUE)
+pace <- read.csv(here::here("data/pacemaker_four_years_km.csv"),
+                 header= TRUE)
+
+# looking at 4 years
+
+np <- c(480,340,166) # number at risk for no_pace
+p <- c(480,330,167) # number at risk for pace
+t_risk <- c(0,2,4) # X axis tick labels
+
+pre_no_pace <- IPDfromKM::preprocess(dat=no_pace,
+                                     trisk=t_risk,
+                                     nrisk=np,
+                                     maxy=100)
+
+pre_pace <- IPDfromKM::preprocess(dat=pace,
+                                  trisk=t_risk,
+                                  nrisk=p,
+                                  maxy=100)
+
+ipd_no_pace <- IPDfromKM::getIPD(prep=pre_no_pace,
+                                 armID=0, # treat = 0
+                                 tot.events=NULL)
+
+ipd_pace <- IPDfromKM::getIPD(prep=pre_pace,
+                              armID=1, # treat = 1
+                              tot.events=NULL)
+```
+
+Accuracy assessment
+
+```{r accuracy}
+summary(ipd_no_pace)
+plot(ipd_no_pace)
+
+summary(ipd_pace)
+plot(ipd_pace)
+```
+
+Secondary analysis
+
+```{r secondary}
+report <- IPDfromKM::survreport(ipd1=ipd_no_pace$IPD,
+                                ipd2=ipd_pace$IPD,
+                                arms=2,
+                                interval=3, 
+                                s=c(0.50,0.75,0.95))
+
+```
+
+Generate unique data frame with both IPD data
+
+```{r}
+both_ipd4 = dplyr::bind_rows(ipd_pace$IPD, ipd_no_pace$IPD) %>% 
+  dplyr::mutate(treat = dplyr::case_when(
+    treat == 0 ~ "No pacemaker",
+    treat == 1 ~ "Pacemaker"),
+    treat = as.factor(treat))
+```
+
+```{r}
+save(both_ipd4,
+     file = here::here("output/data/both_ipd4.RData"))
+```

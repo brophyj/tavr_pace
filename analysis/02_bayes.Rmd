@@ -1,0 +1,124 @@
+---
+title: "Untitled"
+author: "Arthur M. Albuquerque"
+date: "11/6/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+
+# Download rstanarm's "Survival Analysis Version" 
+# https://github.com/stan-dev/rstanarm
+
+# install.packages("rstanarm", repos = c("https://mc-stan.org/r-packages/", getOption("repos")))
+
+library(rstanarm)
+library(magrittr)
+library(here)
+```
+
+
+```{r load data}
+# load the 4-years digitalized KM datasets
+load(here::here("output/data/both_ipd4.RData"))
+```
+
+# Vague prior
+
+Fit model
+
+```{r}
+vague <- rstanarm::stan_surv(formula = survival::Surv(time, status) ~ 1  + treat,
+                            data = both_ipd4,
+                            chains  = 4,
+                            cores = parallel::detectCores(),
+                            seed  = 123,
+                            warmup = 2000,
+                            iter = 4000)
+
+save(vague, file = here::here("output/fit/bayesian_model_vague.RData"))
+
+```
+
+Check priors
+
+```{r}
+rstanarm::prior_summary(vague)
+```
+
+
+Check baseline hazard posterior
+
+```{r}
+plot(vague)
+```
+
+Model summary
+
+```{r}
+print(vague, digits = 2)
+```
+
+HR 95% credible interval 
+
+```{r}
+vague %>% 
+  tidybayes::tidy_draws() %>% 
+  ggdist::mean_qi(exp(treatPacemaker))
+```
+
+
+# Informative prior
+
+```{r}
+# informative prior hr 1.14; 95% CI, 1.01-1.29
+# doi: 10.1001/jamanetworkopen.2021.16564
+
+mean_prior = log(1.14)
+se_prior = ((log(1.29) - log(1.01))/3.92) * 1.5 # downweight by 50%
+
+
+informative <- rstanarm::stan_surv(formula = survival::Surv(time, status) ~ 1 + treat,
+                            
+                            prior = rstanarm::normal(mean_prior,se_prior), # coefficient
+                            
+                            data = both_ipd4,
+                            chains = 4,
+                            cores = parallel::detectCores(),
+                            seed = 123,
+                            warmup = 2000,
+                            iter = 4000)
+
+save(informative, file = here::here("output/fit/bayesian_model_informative.RData"))
+```
+
+
+Check priors
+
+```{r}
+rstanarm::prior_summary(informative)
+```
+
+Check baseline hazard posterior
+
+```{r}
+plot(informative)
+```
+
+Model summary
+
+```{r}
+print(informative, digits = 2)
+```
+
+```{r}
+
+informative %>% 
+  tidybayes::tidy_draws() %>% 
+  ggdist::mean_qi(exp(treatPacemaker))
+```
+
