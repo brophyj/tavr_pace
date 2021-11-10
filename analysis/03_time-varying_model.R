@@ -13,13 +13,10 @@ load(here::here("output/data/both_ipd8.RData"))
 #                              seed  = 123,
 #                              warmup = 2000,
 #                              iter = 4000)
-# 
-# save(tve, file = here::here("output/fit/bayesian_model_TVE.RData"))
 
 load(here::here("output/fit/bayesian_model_TVE.RData"))
 
-p = plot(tve, 
-         plotfun = "tve")
+p = plot(tve, plotfun = "tve")
 
 # Plot
 p
