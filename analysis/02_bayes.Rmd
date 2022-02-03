@@ -72,7 +72,55 @@ vague %>%
 ```
 
 
-# Informative prior
+# Skeptical prior
+
+```{r}
+# Source: https://doi.org/10.1016/j.jcin.2018.11.008
+# Table 4, "New pacemaker"
+
+mean_prior = log(0.99)
+se_prior = (log(1.49) - log(0.65))/3.92
+
+skeptical_model =
+  rstanarm::stan_surv(formula = survival::Surv(time, status) ~ 1 + treat,
+                      prior = rstanarm::normal(mean_prior,se_prior), # coefficient
+                      data = both_ipd4,
+                      chains = 4,
+                      cores = parallel::detectCores(),
+                      seed = 123,
+                      warmup = 2000,
+                      iter = 4000)
+
+save(skeptical_model, file = here::here("output/fit/bayesian_model_skeptical.RData"))
+```
+
+Check priors
+
+```{r}
+rstanarm::prior_summary(skeptical_model)
+```
+
+Check baseline hazard posterior
+
+```{r}
+plot(skeptical_model)
+```
+
+Model summary
+
+```{r}
+print(skeptical_model, digits = 2)
+```
+
+```{r}
+
+skeptical_model %>% 
+  tidybayes::tidy_draws() %>% 
+  ggdist::mean_qi(exp(treatPacemaker))
+```
+
+
+# Informative prior (50% SWEDEHEART SAVR)
 
 ```{r}
 # informative prior hr 1.14; 95% CI, 1.01-1.29
@@ -122,3 +170,52 @@ informative %>%
   ggdist::mean_qi(exp(treatPacemaker))
 ```
 
+# Informative prior (100% SWEDEHEART SAVR)
+
+```{r}
+# informative prior hr 1.14; 95% CI, 1.01-1.29
+# doi: 10.1001/jamanetworkopen.2021.16564
+
+mean_prior = log(1.14)
+se_prior = ((log(1.29) - log(1.01))/3.92)
+
+
+informative_100 <- rstanarm::stan_surv(formula = survival::Surv(time, status) ~ 1 + treat,
+                            
+                            prior = rstanarm::normal(mean_prior,se_prior), # coefficient
+                            
+                            data = both_ipd4,
+                            chains = 4,
+                            cores = parallel::detectCores(),
+                            seed = 123,
+                            warmup = 2000,
+                            iter = 4000)
+
+save(informative_100, file = here::here("output/fit/bayesian_model_informative_100.RData"))
+```
+
+
+Check priors
+
+```{r}
+rstanarm::prior_summary(informative_100)
+```
+
+Check baseline hazard posterior
+
+```{r}
+plot(informative_100)
+```
+
+Model summary
+
+```{r}
+print(informative_100, digits = 2)
+```
+
+```{r}
+
+informative_100 %>% 
+  tidybayes::tidy_draws() %>% 
+  ggdist::mean_qi(exp(treatPacemaker))
+```
