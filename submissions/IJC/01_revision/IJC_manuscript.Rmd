@@ -492,9 +492,9 @@ for all beliefs in Table 1.
 
 Lastly, to aid clinical decision-making, we estimated the marginal
 posterior distributions on risk differences (RDs). These distributions varied
-according to the underlying belief (Supplementary Table 1). The posterior probabilities 
+according to the underlying belief (Table 1). The posterior probabilities 
 of any harm on both relative (HR > 1.00, Table 1) and absolute scale (RD > 0%, 
-Supplementary Table 1) are, as expected, identical. Moreover, we estimated
+Table 1) are, as expected, identical. Moreover, we estimated
 the posterior probabilities of absolute mortality increase association with 
 pacemaker exposure by 1% and 2%. The posterior probability of RD > 1% varied
 between 58.0% to 94%.
@@ -629,10 +629,86 @@ dplyr::left_join(HRcri95, HRsprobs) |>
   flextable::add_header_row(top = TRUE, 
                             values = c(" ", "Posterior probability, %"), 
                             colwidths = c(2, 3)) |> 
-  flextable::theme_box() |> 
-  flextable::add_footer_lines('"Semi-informative SAVR 50%" regards posterior distribution while assuming a prior based on the surgical aortic valve replacement SWEDEHEART data with 50% of weight. "Fully-informative SAVR 100%" regards the same data, but with 100% weight.') |> 
-  flextable::add_footer_lines('Abbreviation: HR, hazard ratio')
+  flextable::theme_box()
 ```
+
+```{r}
+# Source: https://doi.org/10.1016/j.jclinepi.2019.10.015
+# Section 4.2. Calculation of absolute effects for events (e.g., mortality)
+
+RD_HR_fun = function(r0, HR){
+  # r0 = baseline risk (no pacemaker group)
+  # r1 = risk in the pacemaker group
+  # HR = hazard ratio
+  r1 = 1 - (1 - r0)^HR
+  
+  # RD = risk difference (%)
+  100*(r1 - r0)
+}
+
+# Load digitalized data from KM curve on "No pacemaker" group
+
+no_pace_data = read.csv(here::here("data/no_pacemaker_four_years_km.csv"),
+                    header= TRUE)
+
+# Extract risk at last time point 
+baseline_risk = 
+  
+  # "100 -" is necessary because the original digitalized data regards "Cumulative Survival"
+  # but we want the mortality risk
+  # Thus, one needs to subtract 100 (%) by the survival value
+  
+  100 - no_pace_data[nrow(no_pace_data), 2]
+
+
+rd_table_fun = function(model, col_name){
+  rd = 
+    model |> 
+    tidybayes::tidy_draws() |> 
+    dplyr::summarise(RD = RD_HR_fun(r0 = baseline_risk/100, HR = exp(treatPacemaker)))
+  
+  colnames(rd) = col_name
+  
+  return(rd)
+}
+
+RDs = rd_table_fun(vague, "Vague") |> 
+  dplyr::bind_cols(
+    rd_table_fun(skeptical_model, "Skeptical"),
+    rd_table_fun(informative, "Semi-informative SAVR 50%"),
+    rd_table_fun(informative_100, "Fully-informative SAVR 100%"),
+  ) |> 
+  tidyr::pivot_longer(1:4)
+
+cri95 = 
+  RDs |> 
+  dplyr::group_by(name) |> 
+  ggdist::median_hdi(value) |> 
+  dplyr::mutate(dplyr::across(value:.upper, ~round(.,1))) |> 
+  dplyr::summarise("Belief" = name,
+                   "RD (95% CrI)" = stringr::str_c(
+                     value, " (", .lower, ", ", .upper, ")"))
+
+probs = 
+  RDs |> 
+  dplyr::group_by(name) |> 
+  dplyr::summarise("RD >0%" = mean(value > 0),
+                   "RD >1%" = mean(value > 1),
+                   "RD >2%" = mean(value > 2)) |> 
+  dplyr::mutate(dplyr::across(2:4, ~round(100*.,1))) |> 
+  dplyr::rename("Belief" = name)
+
+dplyr::left_join(cri95, probs) |> 
+  dplyr::mutate(Belief = forcats::fct_rev(Belief)) |> 
+  dplyr::arrange(Belief) |> 
+  flextable::flextable() |> 
+  flextable::autofit() |> 
+  flextable::theme_box() |> 
+  flextable::add_footer_lines('The assumed fixed baseline risk was 39.9%, based on the SWEDEHEART TAVR data on patients not exposed to pacemaker at 4 years.') |> 
+  flextable::add_footer_lines('"Semi-informative SAVR 50%" regards posterior distribution while assuming a prior based on the surgical aortic valve replacement SWEDEHEART data with 50% of weight. "Fully-informative SAVR 100%" regards the same data, but with 100% weight.') |> 
+  flextable::add_footer_lines('Abbreviations: HR, hazard ratio; RD, risk difference')
+```
+
 
 \newpage
 
