@@ -104,7 +104,7 @@ probs =
   dplyr::group_by(name) |> 
   dplyr::summarise("RD >0%" = mean(value > 0),
                    "RD >1%" = mean(value > 1),
-                   "RD >5%" = mean(value > 5)) |> 
+                   "RD >2%" = mean(value > 2)) |> 
   dplyr::mutate(dplyr::across(2:4, ~round(100*.,1))) |> 
   dplyr::rename("Belief" = name)
 

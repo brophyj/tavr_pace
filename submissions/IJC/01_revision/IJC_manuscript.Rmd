@@ -71,22 +71,40 @@ Both authors do not report any potential conflicts of interest.
 
 **Word Count**: 
 
-2599
+2481
 
 \newpage
 
 **Structured Abstract**: (212 words)
 
-Objectives: To estimate the probability of increased total mortality risk in patients receiving a cardiac pacemaker following transcatheter aortic valve replacement (TAVR).
+Objectives: To estimate the probability of increased total mortality risk in
+patients receiving a cardiac pacemaker following transcatheter aortic valve
+replacement (TAVR).
 
-Background: A recent publication of a nationwide Swedish, population-based cohort study found no statistically significant difference for all-cause mortality. There are several reasons to query the robustness of this analysis and to investigate if a Bayesian reanalysis would lead to the same conclusion. 
+Background: A recent publication of a nationwide Swedish, population-based
+cohort study found no statistically significant difference for all-cause
+mortality. It is unknown if a Bayesian reanalysis would provide additional
+insights and lead to the same conclusion.
 
-Methods: A digitalized approach to the published Kaplan -- Meier curves to permit the  reconstruction of the
-individual patient dataset. Bayesian survival analyses of this data using both vague, thereby  allowing the posterior probability to be completely dominated by the observed data, and informative priors, based on the mortality risk of pacemaker implantation following surgical aortic valve replacement, were performed.
+Methods: A digitalized approach to the published Kaplan – Meier curves was used
+to reconstruct the individual patient dataset. Bayesian survival analyses of
+this data using both vague, thereby allowing the posterior probability to be
+completely dominated by the observed data, as well as skeptical and informative
+priors, based on the mortality risk of pacemaker implantation following surgical
+aortic valve replacement, were performed.
 
-Results: Individual patient data was reliably extracted and showed an increased risk at 4 year follow-up (Hazard ratio (HR) = 1.08, 95% CI 0.85 - 1.36). The Bayesian analysis using a vague prior revealed a 75% probability of increased mortality in the pacemaker group. Using an informative prior, the posterior probability of increased mortality following pacemaker insertion was increased to 94%.
+Results: The individual patient data set was reliably reconstructed and showed
+a 4 year follow-up hazard ratio (HR) = 1.08, 95% credible interval (CrI) 0.85
+- 1.36. The Bayesian analysis using a vague prior revealed a 74.9% probability
+of increased mortality in the pacemaker group. Using a skeptical,
+semi-informative, and fully informative priors, the posterior probabilities of
+increased mortality following pacemaker insertion was increased to 68.9%, 93.9%
+and 98.4%, respectively.
 
-Conclusions: In contrast to the original publication, this Bayesian reanalysis suggests a moderate to high probability of an increased total mortality in TAVR patients following pacemaker implantation.
+Conclusions: This Bayesian reanalysis suggests a moderate to high probability of
+an increased total mortality in TAVR patients requiring post procedural
+pacemaker implantation.
+
 
 **Key Words**: Pacemaker, mortality, Bayesian
 
@@ -97,13 +115,14 @@ Conclusions: In contrast to the original publication, this Bayesian reanalysis s
 ## Introduction
 
 Recently, a nationwide Swedish, population-based cohort study found no
-statistically significant difference for all-cause mortality (hazard ratio [HR] 1.03; 95% CI: 0.88 - 1.22; P = 0.692) in patients who underwent permanent pacemaker implantation after transcatheter aortic valve replacement (TAVR) between 2008 and
-2018 [@RN5758]. Leading the authors to conclude that long-term survival
-between patients who did and did not undergo permanent pacemaker
-implantation after TAVR was not different. While the study included a
-large unselected sample of 3,420 TAVR patients, there are a number of
-reasons why it is of interest to query the strength of the evidence
-supporting their conclusion. 
+statistically significant difference for all-cause mortality (hazard ratio
+[HR] 1.03; 95% CI: 0.88 - 1.22; P = 0.692) in patients who underwent permanent
+pacemaker implantation after transcatheter aortic valve replacement (TAVR)
+between 2008 and 2018 [@RN5758]. While the study included a large unselected sample
+of 3,420 TAVR patients, there are a number of reasons why it is of interest to
+query the strength of the evidence supporting the conclusion that long-term
+survival between patients who did and did not undergo permanent pacemaker
+implantation after TAVR is not different.
 
 First, their central Kaplan--Meier curve shows survival curves crossing,
 raising the possibility of a time-varying HR such that the proportional
@@ -113,7 +132,7 @@ comparative lifetime analysis with some patients followed up to 10
 years may not be the most informative and clinically relevant. As
 eventually we all die, this analysis perhaps obscures some earlier
 clinically pertinent mortality differences among those receiving and not
-receiving pacemakers post-TAVR. Thirdly, the same nationwide databases
+receiving pacemakers peri-TAVR. Thirdly, the same nationwide databases
 have examined the mortality impact of pacemaker implantation in a
 contemporary population of aortic stenosis patients undergoing surgical
 aortic valve replacement (SAVR) [@RN5759] and the inclusion of all or
@@ -150,29 +169,64 @@ follow-up for our analyses.
 
 ### Statistical analyses
 
-Bayesian approaches to survival analysis can provide a number of
-benefits over the classical frequentist approach, including the ability
-to make direct probability statements about parameters of interest (the
-risk of pacemaker implantation), and to incorporate prior knowledge. These probability statements arise from the posterior distribution according to the following equation:     
+Bayesian approaches to survival analysis can provide a number of benefits over
+the classical frequentist approach, including the ability to make direct
+probability statements about parameters of interest (the risk of pacemaker
+implantation), and to incorporate prior knowledge. These probability statements
+arise from the posterior distribution according to the following equation:
  $$ \text{Posterior}  = \frac{\text{Probability of the data} * \text{Prior}}{\text{Normalizing Constant}} $$
 
-Therefore, in addition to the current data summarized by the probability of the data (likelihood function) one requires a prior probability distribution each parameter. The robustness of the Bayesian approach is often assessed by sensitivity analyses that examine the variation in the posterior probability as a function of the choice of different prior distributions.  
+Therefore, in addition to the current data summarized by the probability of the
+data (likelihood function) one requires a prior probability distribution each
+parameter. The robustness of the Bayesian approach is often assessed by
+sensitivity analyses that examine the variation in the posterior probability as
+a function of the choice of different prior distributions.  
 
 The mechanics of the Bayesian analyses were performed using the Stan programming
-language [@stan] through the R package 
-rstanarm [@rstanarm] . We fitted a proportional hazard regression model using cubic M-splines for the baseline hazard. Bayesian analyses require a prior distribution for each parameter. In this model, parameters were the intercept, M-spline coefficients, and coefficient regarding the risk of pacemaker exposure. Because our focus in this article was on the latter, we used rstanarm's default vague priors for the intercept and M-spline coefficients (Normal[0, 20] and Dirichlet[1, 1, 1, ...], respectively) in all analyses.
+language [@stan] through the R package rstanarm [@rstanarm]. We fitted a proportional
+hazard regression model using cubic M-splines for the baseline hazard. Bayesian
+analyses require a prior distribution for each parameter. In this model,
+parameters were the intercept, M-spline coefficients, and the pacemaker exposure
+risk. Because our focus in this article was on the latter, we used rstanarm’s
+default vague priors for the intercept and M-spline coefficients
+(Normal[0, 20] and Dirichlet[1, 1, 1, …], respectively) in all analyses.
 
-To estimate pacemaker exposure's marginal posterior distribution (log hazard ratio between pacemaker and no pacemaker groups), we used four different priors. First we performed the analysis using rstanarm's built-in default vague prior (Normal [0, 2.50]; mean and standard deviation prior).  This prior contributes very little information to the posterior distribution and allows it to be completely dominated by the data. Second, we used an skeptical prior based on Placement of Aortic Transcatheter Valve Among (PARTNER) studies with patients at intermediate or high surgical risk who underwent TAVR [@ARNOLD]. We extracted their 1-year mortality adjusted hazard ratio on pacemaker exposure to generate this prior (Normal [-0.01, 0.21]). Third, we used an informative prior (Normal[0.13, 0.094])
-based on a previous study, using the nationwide Swedish databases as the article reanalyzed here [@RN5758], but in a cohort undergoing SAVR [@RN5759]. We downweighted the influence of this informative prior by 50%, because while the populations are similar (everyone has aortic stenosis), the aortic valve interventions were different and the long term evolution of SAVR patients receiving pacemakers may not be identical to TAVR patients. To downweight, we increased the original standard error by 50% (hereafter, SAVR 50%). Lastly, we created a prior based on the same data,
-but with 100% of weight (Normal[0.13, 0.062]; hereafter, SAVR 100%).
+To assess robustness of results, we estimated pacemaker exposure’s marginal
+posterior distribution (log hazard ratio between pacemaker and no pacemaker
+groups) with four different priors. First we performed the analysis using
+rstanarm’s built-in default vague prior (Normal [0, 2.50]; mean and standard
+deviation prior). This prior contributes very little information to the
+posterior distribution and allows it to be completely dominated by the data.
+Second, we used a skeptical prior, defined as a low prior belief that
+peri-procedural pacemaker implantation is associated with increased mortality.
+This prior was based on data from the Placement of Aortic Transcatheter Valve
+Among (PARTNER) 2 studies of 3,763 intermediate or high surgical risk patients
+undergoing TAVR [@ARNOLD]. The reported 1-year mortality adjusted hazard ratio
+for pacemaker exposure (HR 0.99; 95% CI0.65 to 1.49) was transformed to a Normal
+[-0.01, 0.21] skeptical prior. Third, we used a semi - informative prior based
+on a previous study, using the same nationwide Swedish databases as the article
+reanalyzed here [@RN5759], but in a cohort of almost 25,000 patents undergoing
+SAVR (2). This study reported an increased mortality risk with pacemaker
+implantation (HR 1.14; 95%CI, 1.01-1.29) which was transformed to a
+Normal[0.13, 0.094] semi - informative prior. We downweighted the influence of
+this informative prior by 50%, because while the populations are similar
+(everyone has aortic stenosis) and studied in the same institutions, the aortic
+valve interventions were different and the long term evolution of SAVR patients
+receiving pacemakers may not be identical to TAVR patients. To downweight, we
+increased the original standard error by 50% (hereafter labelled “SAVR 50%”).
+Lastly, we created a fully informed prior based on the same data, but with 100%
+of weight (Normal[0.13, 0.062]; hereafter labelled “SAVR 100%”).
 
-Marginal posterior distributions are summarized with medians and 95% highest-density intervals (credible intervals), defined as the narrowest interval containing 95% of the probability density function [@mcelreath2020]. We not only calculated the posterior probability of any harm
-(HR >1.00), but also of greater harms (HR >1.10 and HR >1.25). In addition,
-we converted hazard ratio marginal posterior distributions
-to the absolute scale (risk difference [RD]) and estimated different
-posterior probabilities (RD >0%, RD >1%, and RD >5%).
-We assumed a baseline mortality risk (no pacemaker group) of 39.9% at 4 years
-[@Skoetz], based on the digitalized extracted data mentioned above [@RN5758].
+Marginal posterior distributions are summarized with medians and 95%
+highest-density intervals (credible intervals), defined as the narrowest
+interval containing 95% of the probability density function [@mcelreath2020].
+We not only calculated the posterior probability of any harm (HR >1.00), but
+also of greater harms (HR >1.10 and HR >1.25). In addition, we converted
+hazard ratio marginal posterior distributions to the absolute scale (risk
+difference [RD]) and estimated different posterior probabilities (RD >0%, 
+RD >1%, and RD >2%). We assumed a baseline mortality risk (no pacemaker group)
+of 39.9% at 4 years [@Skoetz], based on the digitalized extracted data
+mentioned above [@RN5758].
 
 All analyses were executed within the integrated development environment
 of RStudio and the statistical code can be found on
@@ -298,18 +352,21 @@ tidy_cox4 =
 
 ```
 
-Even if the proportional hazards assumptions are not violated,
-clinically it is indicated to investigate the risks over a more
-restricted time window. In accordance also with the varying risks, we
-elected a priori to concentrate on a 4-year time window. Using this time
-frame, we extracted the individual data as described in the Methods section
-above. The frequentist Cox proportional hazards model analysis for this
-more restricted data set results in a HR = `r tidy_cox4$estimate`, 95% CI `r tidy_cox4$conf.low` - `r tidy_cox4$conf.high`, p =
-`r tidy_cox4$p.value`. While this remains statistically not significant, the point
-estimate has clearly moved towards an increased mortality risk in the 
-pacemaker group. Using this statistically non-sgnificant result to conclude that a pacemaker does
-not influence 4-year mortality risks makes the common error of confusing absence of
-evidence with evidence of absence. To avoid the nullism and dichotomania associated with null hypothesis significance testing[@RN5433], we next explored the data with a Bayesian survival analysis. 
+Even if the proportional hazards assumptions are not violated, clinically it is
+indicated to investigate the risks over a more restricted time window. In
+accordance also with the varying risks, we elected a priori to concentrate on
+a 4-year time window. Using this time frame, we extracted the individual data as
+described in the Methods section above. The frequentist Cox proportional hazards
+model analysis for this more restricted data set results in a HR =
+`r tidy_cox4$estimate`, 95% CI `r tidy_cox4$conf.low` - `r tidy_cox4$conf.high`,
+p = `r tidy_cox4$p.value`. The 4 year point estimate has moved towards an
+increased mortality risk in the pacemaker group, but the result remains not
+statistically significant. However, using this statistically non-significant
+result to conclude that a pacemaker does not influence 4-year mortality risks
+makes the common error of confusing absence of evidence with evidence of
+absence. To avoid the nullism and dichotomania associated with null hypothesis
+significance testing[@RN5433], we next explored the data with a Bayesian
+survival analysis.
 
 ### Bayesian survival analysis
 
@@ -341,16 +398,14 @@ vague_prob =
 ```
 
 
-Bayesian approaches to survival analysis can provide a number of
-benefits over the classical frequentist approach, including the ability
-to make direct probability statements about parameters of interest (the
-risk of pacemaker implantation), and to incorporate prior knowledge.
-Using a vague prior the HR at a 4 year time point is `r vague_interval[[1]]`,
-95% credible interval (95% CrI `r vague_interval[[2]]` - `r vague_interval[[3]]`).
-While the CrI approximates the previously calculated CI, it can now be used to
-formulate direct probability statements. As shown in Figure 3 and Table 1, the
-use of a pacemaker is compatible with an `r vague_prob[[1]]`% probability of
-increased mortality compared to those not receiving a pacemaker. 
+Using a vague prior the Bayesian HR at a 4 year time point is
+`r vague_interval[[1]]`, 95% credible interval (95% CrI `r vague_interval[[2]]`
+- `r vague_interval[[3]]`). While the CrI approximates the previously calculated
+CI, it can now be used to formulate direct probability statements. As shown in
+Figure 3 and Table 1, the use of a pacemaker is compatible with an
+`r vague_prob[[1]]`% probability of increased mortality compared to those not
+receiving a pacemaker, calculated as the area under the curve to the right of HR
+= 1.0.
 
 ```{r skeptical interval + probability}
 skeptical_interval = 
@@ -374,10 +429,10 @@ probabilities, it does not introduce relevant external information into the
 analysis, limiting the extent to which the Bayesian framework can contribute.
 Further analyses with more informative
 priors could cover different beliefs on this subject. When assuming a skeptical
-prior based on a large observational study [@ARNOLD], there is a apparent power
+prior based on a large observational study [@ARNOLD], there is an apparent power
 increase, represented by the narrower credible interval
-(95% CrI `r skeptical_interval[[2]]` - `r skeptical_interval[[3]]`), and smaller
-probability of increased mortality (Figure 3 and Table 1).
+(95% CrI `r skeptical_interval[[2]]` - `r skeptical_interval[[3]]`), and slightly
+smaller probability of increased mortality (Figure 3 and Table 1).
 
 ```{r SAVR 50% interval + probability}
 informative_interval = 
@@ -412,20 +467,26 @@ informative100_prob =
 
 ```
 
-To further comprise other beliefs, we also reanalyzed this data using priors
-based on the same Swedish databases, but in patients undergoing SAVR [@RN5759].
-The choice for this belief was based on the similarities in the populations,
-everyone with aortic stenosis undergoing treatment in the same hospitals in the
-same treatment windows. With this informative prior downweighted by 50%
-(SAVR 50%), there is shift towards greater mortality association with pacemaker
-exposure (HR `r informative_interval[[1]]`, 95% CrI
-`r informative_interval[[2]]` - `r informative_interval[[3]]`), along with
-greater probability of HR > 1 (`r informative_prob[[1]]`%, Table 1). Without
-any downweight on the prior (SAVR 100%), the marginal posterior distribution
-shifts further from HR of 1 (Figure 3 and Table 1). 
+Other scientifically justified beliefs can be incorporated and the robustness of
+the final (posterior) probabilities assessed. For example, informative priors
+based on the risk of pacemaker implantation in aortic stenosis patients from the
+same Swedish databases, but undergoing SAVR [@RN5759] could be used. The choice for
+this informative prior is justified by the similarities in the populations with
+treatments taking place in the same hospital centers at contemporary time
+windows. This informative prior may be downweighted, if so desired to account
+for the additional uncertainty associated with the varying type of aortic valve
+intervention. As shown in Figure 3 and Table 1, these informative priors lead to
+high posterior probabilities, from `r informative_prob[[1]]`% to 
+`r informative100_prob[[1]]`%, of increased 4 year mortality
+following TAVR pacemaker insertion. 
 
 Another advantage of Bayesian analyses is the ability to calculate posterior
-probabilities other than of any harm (HR > 1), such as of 10% harm increase
+probabilities other than of any harm (HR > 1). As shown in Table 1, while it is
+somewhat unlikely that the relative risk associated with a pacemaker exceeds
+a 25% increase, there is a moderate probability (34-67%) that the relative risk
+exceeds a 10% increase.
+
+such as of 10% harm increase
 (HR > 1.10) or 25% increase (HR > 1.25). These posterior probabilities are shown
 for all beliefs in Table 1.
 
@@ -435,50 +496,73 @@ according to the underlying belief (Supplementary Table 1). The posterior probab
 of any harm on both relative (HR > 1.00, Table 1) and absolute scale (RD > 0%, 
 Supplementary Table 1) are, as expected, identical. Moreover, we estimated
 the posterior probabilities of absolute mortality increase association with 
-pacemaker exposure by 1% and 5%. The posterior probability of RD > 1% varied
+pacemaker exposure by 1% and 2%. The posterior probability of RD > 1% varied
 between 58.0% to 94%.
 
 
 ## Discussion
 
-In this reanalysis of the recent SWEDEHEART
-registry  publication[@RN5758], we were able to reliably extract the individual
-patient data concerning TAVR mortality as a function of receiving or not
-a permanent cardiac pacemaker. The original analysis used a 10-year
-follow-up window and as the hazard ratios varied over time, we analyzed
-the risk associated with a cardiac pacemaker using a shorter 4-year
-window. This has the advantages of being a period when the hazard ratios
-appear constant as well as providing results in a more clinically
-pertinent risk window. Certainly, one could argue that examining relative
-risks at 10 years when the mean entry age is 81 is of limited value since
-most patients will be deceased by this time, independently of the
-presence or absence of a pacemaker following their TAVR. Our standard
-survival analysis using 4-year mortality as the outcome revealed an
-increased risk following pacemaker insertion (HR = `r tidy_cox4$estimate`, 95% CI `r tidy_cox4$conf.low` -
-`r tidy_cox4$conf.high`) which not reach statistical significance (p = `r tidy_cox4$p.value`). However, the
-goal of this re-analysis was not to evaluate statistical significance
-but rather to estimate the probability of any increase in total
-mortality experienced by the pacemaker group. The estimation of this
-parameter requires a formal Bayesian survival analysis.
+Bayesian approaches to survival analysis can provide a number of benefits over
+the classical frequentist approach, including the ability to make direct
+probability statements about parameters of interest (the risk of pacemaker
+implantation), and to incorporate prior knowledge. In this Bayesian reanalysis
+of the recent SWEDEHEART registry publication [@RN5758], after reliably
+extracting the individual patient data, we demonstrated, in contrast to the
+original publication [@RN5758], a moderately high probability of increased
+mortality at 4 years among TAVR recipients who received a permanent pacemaker.
+The clinical importance is emphasized by acknowledging that the posterior
+probability.
+
+This reanalysis should not be seen as a criticism of the original analysis but
+rather as a complimentary addition to its pertinent research question, rigorous
+design and data collection. The original analysis used a 10-year follow-up
+window and as the hazard ratios varied over time, we analyzed the risk
+associated with a cardiac pacemaker using a shorter 4-year window. This has the
+advantages of being a period when the hazard ratios appear constant as well as
+providing results in a more clinically pertinent risk window. Certainly, one
+could argue that examining relative risks at 10 years when the mean entry age
+is 81 is of limited value since most patients will be deceased by this time,
+independently of the presence or absence of a pacemaker following their TAVR.
+Our standard survival analysis using 4-year mortality as the outcome revealed an
+increased risk following pacemaker insertion (HR = `r tidy_cox4$estimate`, 95%
+CI `r tidy_cox4$conf.low` - `r tidy_cox4$conf.high`) which not reach statistical
+significance (p = `r tidy_cox4$p.value`). However, the goal of this re-analysis
+was not to evaluate statistical significance but rather to estimate the
+probability of any increase in total mortality experienced by the pacemaker
+group. The estimation of this parameter requires a formal Bayesian survival
+analysis.
 
 The Bayesian analysis with a vague prior revealed an `r vague_prob[[1]]`%
-probability of increased mortality among TAVR patients requiring a
-pacemaker group compared those not requiring the same. The probability of
-increased mortality is augmented to an `r informative_prob[[1]]`% probability when informative prior knowledge about the risk of mortality with pacemakers in
-aortic stenosis patients undergoing SAVR is integrated into the decision
-calculus.
+probability of increased mortality among TAVR patients requiring a pacemaker
+group compared those not requiring the same. The probability of increased
+mortality is augmented to `r informative_prob[[1]]` -
+`r informative100_prob[[1]]`% probability when informative prior knowledge about
+the risk of mortality with pacemakers in aortic stenosis patients undergoing
+SAVR is integrated into the decision calculus. This result was relatively robust
+as even a skeptical prior still resulted in a 70% probability of increased
+mortality following pacemaker insertion.
 
-By concentrating on parameter estimation rather than on
-null hypothesis statistical testing and by incorporating relevant
-background knowledge, this Bayesian analysis arguably leads to a more
-insightful assessment of the risks of pacemakers following TAVR. Using
-aggregate data from previous clinical trials, multiple publications have
-demonstrated the additional advantages of Bayesian re-analyses [@brophy; @goligher]. The
-current article suggests that similar benefits may be observed when
-this approach is applied to individual patient data in the context of an
-observational research design.
+By concentrating on parameter estimation rather than on null hypothesis
+statistical testing and by incorporating relevant background knowledge, this
+Bayesian analysis arguably leads to a more insightful assessment of the risks of
+pacemakers following TAVR. Using aggregate data from previous clinical trials,
+multiple publications have demonstrated the additional advantages of Bayesian
+re-analyses [@brophy; @goligher]. The current article suggests that similar
+benefits may be observed when this approach is applied to individual patient
+data in the context of an observational research design.
 
-Our study also has limitations. First, actual individual data was unavailable, which did not allow us to perform adjusted analysis with relevant covariates, limiting appropriate confounding control. Yet, we note that our frequentist results using extracted data from the reported Kaplan--Meier curve were very similar to the original paper. Thus, it is unlikely that a Bayesian analysis with actual individual data would yield highly different results compared to the ones reported in the present article. Second, because we limited our analysis to data extracted from Kaplan--Meier curves, we could only reanalyze the all-cause mortality outcome. Third, these analyses were not preregistered; hence, they are exploratory and should be interpreted with caution. Lastly, we limited our analyses to a restricted number of priors and did not perform an extensive sensitivity analyses regarding our Bayesian analyses.
+Our study also has limitations. First, actual individual data was unavailable,
+which did not allow us to perform adjusted analysis with relevant covariates,
+limiting appropriate confounding control. Yet, we note that the frequentist
+results using extracted data from the reported Kaplan--Meier curve were very
+similar to the original paper. Thus, it is unlikely that a Bayesian analysis
+with actual individual data would yield highly different results compared to the
+ones reported in the present article. Second, because we limited our analysis to
+data extracted from Kaplan--Meier curves, we could only reanalyze the all-cause
+mortality outcome. Third, these analyses were not preregistered; hence, they are
+exploratory and should be interpreted with caution. Lastly, we limited our
+analyses to a restricted number of priors and did not perform an extensive
+sensitivity analyses regarding our Bayesian analyses.
 
 In conclusion, while the original publication concluded there was "no difference in long-term survival between
 patients who did and did not undergo permanent pacemaker implantation
@@ -514,8 +598,8 @@ hr_table_fun = function(model, col_name){
 HRs = hr_table_fun(vague, "Vague") |> 
   dplyr::bind_cols(
     hr_table_fun(skeptical_model, "Skeptical"),
-    hr_table_fun(informative, "SAVR 50%"),
-    hr_table_fun(informative_100, "SAVR 100%"),
+    hr_table_fun(informative, "Semi-informative SAVR 50%"),
+    hr_table_fun(informative_100, "Fully-informative SAVR 100%"),
   ) |> 
   tidyr::pivot_longer(1:4)
 
@@ -546,7 +630,7 @@ dplyr::left_join(HRcri95, HRsprobs) |>
                             values = c(" ", "Posterior probability, %"), 
                             colwidths = c(2, 3)) |> 
   flextable::theme_box() |> 
-  flextable::add_footer_lines('"SAVR 50%" regards posterior distribution while assuming a prior based on the surgical aortic valve replacement SWEDEHEART data with 50% of weight. "SAVR 100%" regards the same data, but with 100% weight.') |> 
+  flextable::add_footer_lines('"Semi-informative SAVR 50%" regards posterior distribution while assuming a prior based on the surgical aortic valve replacement SWEDEHEART data with 50% of weight. "Fully-informative SAVR 100%" regards the same data, but with 100% weight.') |> 
   flextable::add_footer_lines('Abbreviation: HR, hazard ratio')
 ```
 
@@ -569,7 +653,18 @@ lower survival probability in patients exposed to pacemaker.
 
 Figure 3: Prior and Posterior Distributions of the Hazard Ratio (4-year time window)
 
-Underlying prior and marginal posterior distributions regarding analyses restricted to 4-year time-window (Table 1). Panel A, Vague belief; B, Skeptical; C, SAVR 50%; D, SAVR 100%. Dashed lines depict the underlying prior distributions. Color filled distributions represent the marginal posteriors. Interval bars depict the median and 95% credible intervals of each marginal posterior distribution. Colored filled areas depict the area under the curve above HR of 1.0, which represents the posterior probability above 1.0. These probabilities are also shown in each panel. 
+Underlying prior and marginal posterior distributions regarding analyses
+restricted to 4-year time-window (Table 1). Panel A, Vague prior; B, Skeptical
+prior ; C, Semi-informative prior “SAVR 50%”; D, Fully informative prior
+“SAVR 100%”. Dashed lines depict the underlying prior distributions. Color
+filled distributions represent the marginal posteriors. Interval bars depict the
+median and 95% credible intervals of each marginal posterior distribution.
+Colored filled areas depict the area under the curve above HR of 1.0, which
+represents the posterior probability above 1.0. These probabilities are also
+shown in each panel. In a similar manner, the probability of exceeding a HR
+of 1.1 or 1.25 can be found by calculating the area under the curve to the right
+of the vertical line at HR=1.1 and HR=1.25, respectively.
+
 
 ```{r fig3 helper function}
 prior_vague = rstanarm::prior_summary(vague)
