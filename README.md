@@ -8,7 +8,7 @@ Authors: [Arthur M. Albuquerque](https://twitter.com/arthur_alb1) and [James M. 
 
 ## Project organization
 
-There are three main folders in this repository:
+There are four main folders in this repository:
 
 - `analysis`: code for Kaplan-Meier curve individual patient data (IPD) extraction and Bayesian model fitting
 - `data`: IPD csv files
